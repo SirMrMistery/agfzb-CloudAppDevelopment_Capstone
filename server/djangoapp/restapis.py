@@ -23,15 +23,28 @@ def get_request(url, **kwargs):
         print("\n\nNetwork exception occurred\n\n")
     status_code = response.status_code
     print("With status {} ".format(status_code))
-    print("\nResponse\n")
-    print(response.text)
+    #print("\nResponse\n")
+    #print(response.text)
     json_data = json.loads(response.text)
-    print(json_data)
+    #print(json_data)
     return json_data
 
 
 # Create a `post_request` to make HTTP POST requests
 # e.g., response = requests.post(url, params=kwargs, json=payload)
+def post_request(url, json_payload, **kwargs):
+    print(json_payload)
+    print("POST from {} ".format(url))
+    try:
+        response = requests.post(url, params=kwargs, json=json_payload)
+        status_code = response.status_code
+        print("With status {} ".format(status_code))
+        json_data = json.loads(response.text)
+        print(json_data)
+        return json_data
+    except:
+        print("Network exception occurred")
+
 
 
 # Create a get_dealers_from_cf method to get dealers from a cloud function
@@ -104,8 +117,9 @@ def get_dealers_from_cf(url, **kwargs):
 # - Parse JSON results into a DealerView object list
 def get_dealer_by_id_from_cf(url, dealer_id):
     json_result = get_request(url, id=dealer_id)
-    print("\nXXXXXXXXXXX\n")
-    print(json_result)
+    #print("\nXXXXXXXXXXX\n")
+    #print(json_result)
+    dealer_obj=0
     if json_result:
         dealer = json_result[0]
         dealer_obj = CarDealer(address=dealer["address"], city=dealer["city"], full_name=dealer["full_name"],
@@ -113,30 +127,30 @@ def get_dealer_by_id_from_cf(url, dealer_id):
                                short_name=dealer["short_name"],
                                st=dealer["st"], zip=dealer["zip"])
     
-    print("\nYYYYYYYYYYYY\n")
-    print(dealer_obj)
+    #print("\nYYYYYYYYYYYY\n")
+    #print(dealer_obj)
     return dealer_obj
 
 
 def get_dealer_reviews_from_cf(url, dealer_id):
     results = []
-    print(dealer_id)
+    #print(dealer_id)
     if dealer_id:
-        print("DDD")
+        #print("DDD")
         json_result = get_request(url, dealerId=dealer_id)
     else:
         json_result = get_request(url)
         
-    print("\n\n\nXXXXXXXXXXXXXXXX")
-    print("json_result =", type(json_result))
-    keysList = list(json_result.keys())
-    print("valor = ", keysList)
+    #print("\n\n\nXXXXXXXXXXXXXXXX")
+    #print("json_result =", type(json_result))
+    #keysList = list(json_result.keys())
+    #print("valor = ", keysList)
     #print(json_result['data']['docs'])
     if json_result:
         reviews = json_result['data']['docs']
         for review in reviews:
             print(review)
-            print()
+            #print()
             if review["purchase"]:
                 review_obj = DealerReview(
                     dealership=review["dealership"],
@@ -165,14 +179,14 @@ def get_dealer_reviews_from_cf(url, dealer_id):
                 )
             results.append(review_obj)
         print("\n\nresults")
-        print(results)
+        #print(results)
     return results
 
 
 # Create an `analyze_review_sentiments` method to call Watson NLU and analyze text
 def analyze_review_sentiments(dealer_review):
-    print("REVIEW")
-    print(dealer_review)
+    #print("REVIEW")
+    #print(dealer_review)
     
     api_key = "oYi2cC-ezUlmyby2O6oY3YlFl-Yf51jroZbCfAnRYJhL"
     url = 'https://api.us-east.natural-language-understanding.watson.cloud.ibm.com/instances/c7b8f4c6-b049-47da-871a-2d30451018f4'
